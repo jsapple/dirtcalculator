@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DirtCalc">
+  <rect width="512" height="512" fill="#000000"/>
+  <circle cx="256" cy="256" r="210" fill="#1a1400" stroke="#FFCD11" stroke-width="10"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#6b5400" stroke-width="6"/>
+  <g stroke="#FFCD11" stroke-linecap="round">
+    <line x1="256" y1="78" x2="256" y2="108" stroke-width="8"/>
+    <line x1="256" y1="404" x2="256" y2="434" stroke-width="5" opacity="0.7"/>
+    <line x1="78" y1="256" x2="108" y2="256" stroke-width="5" opacity="0.7"/>
+    <line x1="404" y1="256" x2="434" y2="256" stroke-width="5" opacity="0.7"/>
+  </g>
+  <text x="256" y="68" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="34" font-weight="700" fill="#FFCD11">N</text>
+  <text x="454" y="266" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="24" fill="#c4a000">E</text>
+  <text x="256" y="462" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="24" fill="#c4a000">S</text>
+  <text x="58" y="266" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="24" fill="#c4a000">W</text>
+
+  <g transform="translate(-16 4)">
+    <rect x="124" y="292" width="200" height="50" rx="22" fill="#FFCD11"/>
+    <rect x="136" y="246" width="30" height="48" rx="12" fill="#FFCD11"/>
+    <path fill="#FFCD11" d="M158 292V238l24-50h74l24 34v70z"/>
+    <polyline points="252,232 324,152 368,206" fill="none" stroke="#FFCD11" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill="#FFCD11" d="M352 188c22 6 38 30 32 50-3 10-12 14-22 12l-22-6c4-18 2-34 12-56z"/>
+  </g>
+  <g fill="#1a1400">
+    <path d="M190 278V232l14-26h46l12 18v54z"/>
+    <circle cx="154" cy="317" r="11"/>
+    <circle cx="194" cy="317" r="9"/>
+    <circle cx="232" cy="317" r="9"/>
+    <circle cx="270" cy="317" r="9"/>
+    <circle cx="306" cy="317" r="11"/>
+  </g>
+</svg>
