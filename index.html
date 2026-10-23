@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="DirtCalc" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <title>DirtCalc</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="icon-180.png" />
+  </head>
+  <body class="bg-oled text-white">
+    <div class="app-shell">
+      <header class="status-bar">
+        <p id="gps-status" class="status-left">GPS …</p>
+        <button type="button" id="mark-btn" class="btn-icon" aria-label="Set benchmark">
+          MARK
+        </button>
+      </header>
+
+      <div class="nav-layout">
+        <section class="direct-panel">
+          <div class="direct-head">
+            <div class="hero-compass-wrap">
+              <svg id="hero-compass" viewBox="0 0 200 200" class="hero-compass" aria-hidden="true">
+                <circle id="hero-ring" cx="100" cy="100" r="92" fill="none" stroke="#151515" stroke-width="10" />
+                <circle cx="100" cy="100" r="78" fill="none" stroke="#222" stroke-width="1" />
+                <g id="hero-rose" transform="rotate(0 100 100)">
+                  <text x="100" y="28" text-anchor="middle" fill="#888" font-size="22" font-family="ui-monospace,monospace">N</text>
+                  <text x="176" y="108" text-anchor="middle" fill="#555" font-size="18" font-family="ui-monospace,monospace">E</text>
+                  <text x="100" y="186" text-anchor="middle" fill="#555" font-size="18" font-family="ui-monospace,monospace">S</text>
+                  <text x="24" y="108" text-anchor="middle" fill="#555" font-size="18" font-family="ui-monospace,monospace">W</text>
+                </g>
+                <g id="hero-needle" transform="rotate(0 100 100)">
+                  <polygon points="100,18 91,68 100,60 109,68" fill="#ffffff" />
+                  <polygon points="100,182 91,132 100,140 109,132" fill="#3f3f46" />
+                  <circle cx="100" cy="100" r="4.5" fill="#ffffff" />
+                </g>
+              </svg>
+            </div>
+            <div class="direct-ident-col">
+              <div id="incline-wrap" class="incline-wrap is-idle">
+                <svg class="incline-svg" viewBox="0 0 160 48" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Grade incline">
+                  <line class="incline-base" x1="6" y1="24" x2="154" y2="24" />
+                  <g id="incline-arrow" transform="rotate(0 80 24)">
+                    <line class="incline-shaft" x1="18" y1="24" x2="112" y2="24" />
+                    <polygon class="incline-head" points="104,14 138,24 104,34" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="direct-clr-wrap">
+              <button type="button" id="direct-clr" class="btn-icon btn-lock" aria-label="Clear">
+                <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <g id="lock-open">
+                    <path d="M16.5 10.5V7.2A4.2 4.2 0 0 0 9.4 5.1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                    <rect x="5" y="11.5" width="14" height="9.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="16.2" r="1.15" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                  </g>
+                  <g id="lock-closed" hidden>
+                    <path d="M8 11.5V8a4 4 0 0 1 8 0v3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                    <rect x="5" y="11.5" width="14" height="9.5" rx="2" fill="currentColor"/>
+                    <circle cx="12" cy="16.2" r="1.2" fill="#000"/>
+                  </g>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="nav-instruments">
+            <div class="brief-grid nav-grid">
+              <div class="brief-tile">
+                <span class="instr-label">Dist</span>
+                <span id="instr-dist" class="instr-value">—</span>
+                <span class="instr-unit">ft</span>
+              </div>
+              <div class="brief-tile">
+                <span class="instr-label">Brg</span>
+                <span id="instr-brg" class="instr-value">—</span>
+                <span class="instr-unit">°M</span>
+              </div>
+              <div class="brief-tile">
+                <span class="instr-label">Gps alt</span>
+                <span id="instr-alt" class="instr-value">—</span>
+                <span class="instr-unit">ft</span>
+              </div>
+              <div class="brief-tile" id="hdg-tile">
+                <span class="instr-label">Hdg</span>
+                <span id="instr-hdg" class="instr-value">—</span>
+                <span class="instr-unit">°M</span>
+              </div>
+              <div class="brief-tile">
+                <span class="instr-label">Δ Elev</span>
+                <span id="instr-delev" class="instr-value">—</span>
+                <span class="instr-unit">ft</span>
+              </div>
+              <div class="brief-tile">
+                <span class="instr-label">Slope</span>
+                <span id="instr-slope" class="instr-value">—</span>
+                <span class="instr-unit">%</span>
+              </div>
+            </div>
+            <div class="brief-grid nav-grid">
+              <div class="brief-tile">
+                <span class="instr-label">Cut / fill</span>
+                <span id="instr-cut" class="instr-value">—</span>
+                <span class="instr-unit">ft</span>
+              </div>
+              <div class="brief-tile">
+                <span class="instr-label">Target</span>
+                <span id="instr-target" class="instr-value">0.0</span>
+                <span class="instr-unit">% slope</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="nrst-panel">
+          <div class="brief-grid attitude-grid">
+            <div class="brief-tile" id="pitch-tile">
+              <span class="instr-label">Pitch</span>
+              <span id="instr-pitch" class="instr-value">—</span>
+              <span id="instr-pitch-unit" class="instr-unit">°</span>
+            </div>
+            <div class="brief-tile" id="roll-tile">
+              <span class="instr-label">Roll</span>
+              <span id="instr-roll" class="instr-value">—</span>
+              <span id="instr-roll-unit" class="instr-unit">°</span>
+            </div>
+          </div>
+          <button type="button" id="zero-btn" class="btn-action zero-btn">
+            ZERO
+          </button>
+          <label class="field-label nrst-label" for="target-slope">Target slope %</label>
+          <div class="slope-entry">
+            <input
+              id="target-slope"
+              type="text"
+              inputmode="decimal"
+              enterkeyhint="done"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              value="0.0"
+              class="search-input"
+              placeholder="0.0"
+            />
+            <button type="button" id="slope-sign" class="btn-icon slope-sign" aria-label="Toggle uphill or downhill">
+              ±
+            </button>
+          </div>
+          <button type="button" id="shot-btn" class="btn-action shot-btn">
+            SHOT
+          </button>
+          <p id="shot-status" class="shot-status"></p>
+          <p class="field-label nrst-label">Shots</p>
+          <div class="nrst-scroll">
+            <ul id="shot-list" class="airport-list"></ul>
+            <footer class="site-footer">
+              <details class="how-box">
+                <summary>How this works</summary>
+                <div class="how-body">
+                  <p><b>Install</b> iPhone: Safari → Share → Add to Home Screen. Android: Chrome menu → Install app. Open DirtCalc from that icon.</p>
+                  <p><b>First open</b> Tap once. Allow location. Allow motion &amp; orientation once for heading.</p>
+                  <p><b>Benchmark</b> Stand on the hub. Tap MARK. The padlock closes. GPS ALT at that instant is the benchmark elevation.</p>
+                  <p><b>Mount</b> Fix the phone in the cab with the top of the phone pointing forward. Sit the machine on level ground and tap ZERO. That stores the mount angle.</p>
+                  <p><b>Pitch / roll</b> After ZERO, pitch is the grade you are climbing or descending, in percent. Roll is the side tilt, in percent. The incline arrow follows pitch. The pitch card lights when pitch is within ±1% of the target slope. SLOPE on the left is still GPS rise/run from the benchmark.</p>
+                  <p><b>Grade</b> Drive the line. DIST is run in feet. Δ ELEV is rise from the benchmark. The compass ring and HDG light when HDG matches BRG within ±5°. The hub and shots stay on the phone if the app restarts.</p>
+                  <p><b>Target</b> Tap the slope field for the number pad. 0 is level. ± flips uphill and downhill. CUT/FILL is how far GPS says you are above (CUT) or below (FILL) that plane from the benchmark.</p>
+                  <p><b>SHOT</b> Stores this spot against the locked benchmark, plus the cab pitch and roll at that instant.</p>
+                  <p><b>Unlock</b> Tap the padlock. Confirm before the benchmark and shots are cleared.</p>
+                  <p>Phone GPS is a rough helper, not survey or machine control. Typical error is several feet. Do not build final grade from this app.</p>
+                </div>
+              </details>
+              <a
+                class="donate-btn"
+                href="https://www.paypal.com/donate/?hosted_button_id=2USVXKRCVYV7L"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Donate to keep this site free with zero ads
+              </a>
+            </footer>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <video
+      id="wake-vid"
+      muted
+      playsinline
+      webkit-playsinline
+      loop
+      autoplay
+      disablePictureInPicture
+      aria-hidden="true"
+    ></video>
+    <div id="clear-confirm" class="confirm-sheet" hidden>
+      <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="clear-confirm-title">
+        <p id="clear-confirm-title" class="confirm-title">Clear the benchmark and shots?</p>
+        <button type="button" id="clear-cancel" class="btn-action confirm-cancel">CANCEL</button>
+        <button type="button" id="clear-ok" class="btn-action confirm-ok">CLEAR</button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
