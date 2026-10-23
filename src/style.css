@@ -685,8 +685,17 @@
     line-height: 1.35;
   }
 
+  .confirm-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .confirm-actions .btn-action {
+    flex: 1;
+    margin: 0;
+  }
+
   .confirm-cancel {
-    margin-bottom: 8px;
     border-color: #fff;
     color: #fff;
   }

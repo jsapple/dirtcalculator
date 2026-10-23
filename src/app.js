@@ -13,6 +13,7 @@ const COMPASS_PERM_KEY = "grade-compass-perm";
 const ZERO_KEY = "grade-attitude-zero";
 const COURSE_DEG = 5;
 const ON_GRADE_PCT = COURSE_DEG;
+const BRG_STABLE_FT = 20;
 const JOB_KEY = "grade-job";
 const GEO_FINE = {
   enableHighAccuracy: true,
@@ -117,6 +118,11 @@ function headingMag() {
     );
   }
   return null;
+}
+
+function lockedBearing(bm) {
+  if (!bm || typeof bm.brg !== "number" || Number.isNaN(bm.brg)) return null;
+  return Math.round((bm.brg + 360) % 360);
 }
 
 function setNeedles(brg, hdg) {
@@ -269,15 +275,18 @@ function updateInstruments() {
   const cut =
     rise != null && design != null ? rise - design : null;
 
+  const course =
+    lockedBearing(bm) ?? (run >= BRG_STABLE_FT ? brg : null);
+
   setText("#instr-dist", run < 10 ? run.toFixed(1) : Math.round(run).toString());
-  setText("#instr-brg", padBrg(brg));
+  setText("#instr-brg", course == null ? "—" : padBrg(course));
   setText("#instr-delev", fmtFt(rise, 1));
   setText("#instr-slope", slope == null ? "—" : slope.toFixed(1));
   if (cut == null) setText("#instr-cut", "—");
   else if (Math.abs(cut) < 0.15) setText("#instr-cut", "ON");
   else setText("#instr-cut", `${cut > 0 ? "CUT" : "FILL"} ${Math.abs(cut).toFixed(1)}`);
 
-  setNeedles(brg, hdg);
+  setNeedles(course, hdg);
 }
 
 function renderHero() {
@@ -366,6 +375,7 @@ function markBenchmark() {
     lat: state.position.lat,
     lon: state.position.lon,
     elevFt: metersToFt(state.altitudeM),
+    brg: headingMag(),
     at: Date.now(),
   };
   state.locked = true;
