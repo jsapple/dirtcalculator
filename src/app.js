@@ -11,8 +11,8 @@ import { isCivilNight } from "./sun.js";
 const $ = (sel) => document.querySelector(sel);
 const COMPASS_PERM_KEY = "grade-compass-perm";
 const ZERO_KEY = "grade-attitude-zero";
-const ON_GRADE_PCT = 1;
 const COURSE_DEG = 5;
+const ON_GRADE_PCT = COURSE_DEG;
 const JOB_KEY = "grade-job";
 const GEO_FINE = {
   enableHighAccuracy: true,
@@ -156,9 +156,10 @@ function updateDirectChrome() {
 
 function fmtSigned(n, digits = 1) {
   if (n == null || Number.isNaN(n)) return "—";
-  if (Math.abs(n) < 0.05) return (0).toFixed(digits);
-  const sign = n > 0 ? "+" : "";
-  return `${sign}${n.toFixed(digits)}`;
+  const rounded = Number(n.toFixed(digits));
+  if (rounded === 0) return (0).toFixed(digits);
+  const sign = rounded > 0 ? "+" : "";
+  return `${sign}${rounded.toFixed(digits)}`;
 }
 
 function smoothAngle(prev, next) {
@@ -196,7 +197,7 @@ function setInclineAngle(deg) {
   arrow.setAttribute("transform", `rotate(${(-clamped).toFixed(2)} 80 24)`);
   if (wrap) {
     const label = known
-      ? `Cab pitch ${deg.toFixed(1)} degrees`
+      ? `Cab pitch ${Math.round(deg)} degrees`
       : "Cab pitch, zero the mount on level ground";
     wrap.querySelector("svg")?.setAttribute("aria-label", label);
   }
@@ -205,8 +206,8 @@ function setInclineAngle(deg) {
 function updateAttitude() {
   const att = cabAttitude();
   const live = att.pitch != null;
-  setText("#instr-pitch", live ? fmtSigned(att.pitchPct, 1) : "—");
-  setText("#instr-roll", live ? fmtSigned(att.rollPct, 1) : "—");
+  setText("#instr-pitch", live ? fmtSigned(att.pitchPct, 0) : "—");
+  setText("#instr-roll", live ? fmtSigned(att.rollPct, 0) : "—");
   if (!live) {
     setText("#instr-pitch-unit", "°");
     setText("#instr-roll-unit", "°");
@@ -214,13 +215,13 @@ function updateAttitude() {
     setText("#instr-pitch-unit", "UNZEROED");
     setText("#instr-roll-unit", "UNZEROED");
   } else {
-    setText("#instr-pitch-unit", `${fmtSigned(att.pitch, 1)}°`);
-    setText("#instr-roll-unit", `${fmtSigned(att.roll, 1)}°`);
+    setText("#instr-pitch-unit", `${fmtSigned(att.pitch, 0)}°`);
+    setText("#instr-roll-unit", `${fmtSigned(att.roll, 0)}°`);
   }
   const onGrade =
     state.zeroed &&
     att.pitchPct != null &&
-    Math.abs(att.pitchPct - state.targetSlope) <= ON_GRADE_PCT;
+    Math.abs(Math.round(att.pitchPct) - Math.round(state.targetSlope)) <= ON_GRADE_PCT;
   $("#pitch-tile")?.classList.toggle("on-grade", onGrade);
   const arrowDeg = state.zeroed ? att.pitch : null;
   setInclineAngle(arrowDeg);
@@ -433,7 +434,7 @@ function takeShot() {
   const cab =
     att.pitchPct == null
       ? "cab —"
-      : `cab ${fmtSigned(att.pitchPct, 1)}%  roll ${fmtSigned(att.rollPct, 1)}%`;
+      : `cab ${fmtSigned(att.pitchPct, 0)}%  roll ${fmtSigned(att.rollPct, 0)}%`;
   const i = state.shots.length + 1;
   state.shots.push({
     name: `S${String(i).padStart(2, "0")}`,
